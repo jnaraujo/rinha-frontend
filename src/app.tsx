@@ -1,20 +1,16 @@
 import { JsonProvider } from "./context/JsonContext"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import Home from "./routes/home"
+import JsonViewer from "./routes/json-viewer"
 
 const router = createBrowserRouter([
   {
     path: "/",
-    lazy: async () => {
-      let YourComponent = await import("./routes/home")
-      return { Component: YourComponent.Home }
-    },
+    element: <Home />,
   },
   {
     path: "/json-viewer",
-    lazy: async () => {
-      let YourComponent = await import("./routes/json-viewer")
-      return { Component: YourComponent.JsonViewer }
-    },
+    element: <JsonViewer />,
   },
 ])
 
