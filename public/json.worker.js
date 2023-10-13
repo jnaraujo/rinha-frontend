@@ -1,6 +1,9 @@
 function isJsonValid(json) {
   if (typeof json !== "string"){
-    return false;
+    return {
+      isValid: false,
+      parsedJson: null
+    }
   }
 
   try {
@@ -9,10 +12,49 @@ function isJsonValid(json) {
 
     return {
       isValid: isValid,
-      json: parse
+      parsedJson: parse
     }
   } catch (e) {
-    return false;
+    return {
+      isValid: false,
+      parsedJson: null
+    }
+  }
+}
+
+function render(node, distance = 0, arr=[]) {
+  if (node === null) return null
+
+  const entries = Object.entries(node)
+
+  if (entries.length === 0) return null
+
+  for(let i = 0; i < entries.length; i++) {
+    const [key, value] = entries[i]
+
+    if (typeof value !== "object" || value === null) {
+      arr.push({
+        key, value, type: "primitive",
+        distance,
+      })
+      continue;
+    }
+
+    const isArray = Array.isArray(value)
+
+    arr.push({
+      type: isArray ? "arrayOpen" : "objOpen",
+      key,
+      distance,
+    })
+
+    render(value, distance + 1, arr)
+
+    arr.push({
+      type: isArray ? "arrayClose" : "objClose",
+      key,
+      distance,
+    })
   }
 }
 
@@ -23,9 +65,18 @@ onmessage = function(e) {
 
   switch (action) {
     case 'validate':
+      console.time("validateJson")
+      const {isValid, parsedJson} = isJsonValid(json);
+      console.timeEnd("validateJson")
+      const arr = []
+      console.time("render")
+      render(parsedJson, 0, arr);
+      console.timeEnd("render")
+
       self.postMessage({
         id: id,
-        ...isJsonValid(json)
+        isValid,
+        parsed: arr
       });
       break;
     default:

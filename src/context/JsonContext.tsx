@@ -5,7 +5,7 @@ import { useContext, useEffect, useRef } from "preact/hooks"
 interface IJsonContext {
   isJsonValid(json: string): Promise<{
     isValid: boolean
-    json: any
+    parsed: any
   }>
 }
 
@@ -28,13 +28,14 @@ export function JsonProvider({ children }: { children: ReactNode }) {
   function isJsonValid(json: string) {
     return new Promise<{
       isValid: boolean
-      json: any
+      parsed: any
     }>((resolve) => {
       if (!worker.current)
-        return {
+        return resolve({
           isValid: false,
-          json: null,
-        }
+          parsed: null,
+        })
+
       const id = Math.random()
 
       worker.current?.postMessage({
@@ -46,7 +47,10 @@ export function JsonProvider({ children }: { children: ReactNode }) {
       worker.current.onmessage = (event) => {
         if (event.data.id !== id) return
 
-        resolve(event.data)
+        resolve({
+          isValid: event.data.isValid,
+          parsed: event.data.parsed,
+        })
       }
     })
   }

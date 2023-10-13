@@ -1,51 +1,88 @@
-import clsx from "clsx"
-import { formatValue, isNumber } from "./helper"
+import { AutoSizer, List, WindowScroller } from "react-virtualized"
+import Primitive from "./Primitive"
+import Open from "./Open"
+import Close from "./Close"
 
-export default function View({ node }: { node: object }) {
-  if (node === null) return null
-
-  const entries = Object.entries(node)
-
-  if (entries.length === 0) return null
+export default function View({
+  node: nodeList,
+}: {
+  node: {
+    distance: number
+    key: string
+    type: string
+    value?: string
+  }[]
+}) {
+  if (nodeList.length === 0) return null
 
   return (
-    <div className="space-y-1">
-      {entries.map(([key, value]) => {
-        if (typeof value !== "object" || value === null) {
-          return (
-            <div key={key} className="ml-5 flex gap-1">
-              <span
-                className={clsx({
-                  "text-teal-600": !isNumber(key),
-                  "text-zinc-400": isNumber(key),
-                })}
-              >
-                {key}:
-              </span>
-              <span>{formatValue(value)}</span>
-            </div>
-          )
-        }
+    <div className="flex-1">
+      <WindowScroller>
+        {({ height, isScrolling, onChildScroll, scrollTop }: any) => (
+          <AutoSizer disableHeight>
+            {({ width }: any) => {
+              const rowCount = nodeList.length
+              const ITEM_HEIGHT = 25
+              return (
+                <List
+                  autoHeight
+                  isScrolling={isScrolling}
+                  onScroll={onChildScroll}
+                  scrollTop={scrollTop}
+                  width={width}
+                  height={height}
+                  rowCount={rowCount}
+                  rowHeight={ITEM_HEIGHT}
+                  overscanRowCount={3}
+                  tabIndex={-1}
+                  rowRenderer={({ index, key, style }: any) => {
+                    const node = nodeList[index]
 
-        const isArray = Array.isArray(value)
+                    if (node.type === "objOpen" || node.type === "arrayOpen") {
+                      return (
+                        <Open
+                          key={key}
+                          distance={node.distance}
+                          title={node.key}
+                          style={style}
+                          type={node.type}
+                        />
+                      )
+                    }
 
-        return (
-          <div key={key} className="ml-5 flex flex-col gap-1">
-            <span
-              className={clsx({
-                "text-teal-600": !isNumber(key),
-                "text-zinc-400": isNumber(key),
-              })}
-            >
-              {key}:<span className="text-rose-200">{isArray ? " [" : ""}</span>
-            </span>
-            <div className="border-l-2 border-zinc-300">
-              <View node={value} />
-            </div>
-            <span className="text-rose-200">{isArray ? "] " : ""}</span>
-          </div>
-        )
-      })}
+                    if (
+                      node.type === "objClose" ||
+                      node.type === "arrayClose"
+                    ) {
+                      return (
+                        <Close
+                          key={key}
+                          distance={node.distance}
+                          title={node.key}
+                          style={style}
+                          type={node.type}
+                        />
+                      )
+                    }
+
+                    if (node.type === "primitive") {
+                      return (
+                        <Primitive
+                          key={key}
+                          distance={node.distance}
+                          style={style}
+                          value={node.value}
+                          title={node.key}
+                        />
+                      )
+                    }
+                  }}
+                />
+              )
+            }}
+          </AutoSizer>
+        )}
+      </WindowScroller>
     </div>
   )
 }

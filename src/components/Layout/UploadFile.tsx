@@ -24,9 +24,7 @@ export default function UploadFile() {
       reader.onload = async function (e) {
         const result = e.target?.result as string
 
-        console.time("validate")
         const res = await isJsonValid(result)
-        console.timeEnd("validate")
 
         if (!res.isValid) {
           setError("Invalid file. Please load a valid JSON file.")
