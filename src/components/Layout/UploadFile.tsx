@@ -2,10 +2,12 @@ import { useRef, useState } from "preact/hooks"
 import type { TargetedEvent } from "preact/compat"
 import { useJson } from "../../context/JsonContext"
 import { jsonStore } from "../../store/json-store"
+import { useNavigate } from "react-router-dom"
 
 export default function UploadFile() {
   const { isJsonValid } = useJson()
   const { setJson } = jsonStore()
+  const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -34,11 +36,13 @@ export default function UploadFile() {
         console.time("store")
         setJson({
           raw: result,
-          parsed: JSON.parse(result),
+          parsed: res.parsed,
           name: file.name,
           size: file.size,
         })
         console.timeEnd("store")
+
+        navigate("/json-viewer")
       }
 
       reader.readAsText(file)
