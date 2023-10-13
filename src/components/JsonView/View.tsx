@@ -32,7 +32,7 @@ function View({ node }: Props) {
             >
               {key}:
             </span>
-            <p className="inline break-all">{formatValue(value)}</p>
+            <p className="ml-1 inline break-all">{formatValue(value)}</p>
           </li>
         )
       }
