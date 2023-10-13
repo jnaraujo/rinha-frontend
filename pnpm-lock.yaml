@@ -14,6 +14,9 @@ dependencies:
   eslint-plugin-react:
     specifier: ^7.33.2
     version: 7.33.2(eslint@8.51.0)
+  lucide-preact:
+    specifier: ^0.287.0
+    version: 0.287.0(preact@10.18.1)
   preact:
     specifier: ^10.16.0
     version: 10.18.1
@@ -2025,6 +2028,14 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       yallist: 4.0.0
+    dev: false
+
+  /lucide-preact@0.287.0(preact@10.18.1):
+    resolution: {integrity: sha512-I3DNrGJWg6gnLrm47t+N1GD21G4NH+JQn5GxY+K0AzT+S6hOwmvk66GerJb7UE8bOGQrAIeWewVomHUBN2Alvw==}
+    peerDependencies:
+      preact: ^10.5.13
+    dependencies:
+      preact: 10.18.1
     dev: false
 
   /merge-stream@2.0.0:
