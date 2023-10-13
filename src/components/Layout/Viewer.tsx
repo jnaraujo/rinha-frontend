@@ -31,7 +31,7 @@ export default function Viewer() {
 
   const [pos, setPos] = useState({
     start: 0,
-    end: 10,
+    end: 5,
   })
   const [tree, setTree] = useState<any>()
 
@@ -55,7 +55,7 @@ export default function Viewer() {
           setPos((prev) => {
             return {
               start: prev.end,
-              end: prev.end + 15,
+              end: prev.end + 5,
             }
           })
         }, 50)
@@ -84,14 +84,13 @@ export default function Viewer() {
   }, [pos])
 
   if (!json.name) return null
-  if (!tree) return null
 
   return (
     <section className="mx-auto flex w-[638px] max-w-[100%] flex-1 flex-col gap-4 px-2">
       <div className="mt-4 flex items-center gap-2">
         <h1 className="text-4xl font-bold">{json.name}</h1>
       </div>
-      <div>{<View node={tree} />}</div>
+      <div>{tree ? <View node={tree} /> : <div>Loading...</div>}</div>
     </section>
   )
 }

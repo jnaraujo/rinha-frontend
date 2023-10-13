@@ -36,6 +36,8 @@ export default function UploadFile() {
           return
         }
 
+        navigate("/json-viewer")
+
         const length = await getJsonLength()
 
         setJson({
@@ -43,10 +45,6 @@ export default function UploadFile() {
           size: file.size,
           length,
         })
-
-        setLoading(false)
-
-        navigate("/json-viewer")
       }
 
       reader.readAsText(file)
