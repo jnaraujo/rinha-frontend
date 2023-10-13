@@ -79,8 +79,6 @@ onmessage = function (e) {
     case "getLength":
       const length = getJsonLength(jsonStore)
 
-      console.log("length", length);
-
       self.postMessage({
         id: id,
         length,

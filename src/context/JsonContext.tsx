@@ -37,12 +37,8 @@ export function JsonProvider({ children }: { children: ReactNode }) {
         end,
       })
 
-      console.time("onmessagesliceJson")
       worker.current.onmessage = (event) => {
         if (event.data.id !== id) return
-
-        console.timeEnd("onmessagesliceJson")
-
         resolve(event.data.slicedJson)
       }
     })
