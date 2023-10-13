@@ -4,7 +4,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 const router = createBrowserRouter([
   {
     path: "/",
-    errorElement: <div>404</div>,
     lazy: async () => {
       let YourComponent = await import("./routes/home")
       return { Component: YourComponent.Home }
