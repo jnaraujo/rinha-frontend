@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from "preact/hooks"
 import { jsonStore } from "../../store/json-store"
 import View from "../JsonView/View"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { useJson } from "../../context/JsonContext"
-import { ChevronLeft } from "lucide-preact"
-
 function mergeJson(data: any, newData: any) {
   if (Array.isArray(data)) {
     if (Array.isArray(newData)) {
@@ -91,9 +89,6 @@ export default function Viewer() {
   return (
     <section className="mx-auto flex w-[638px] max-w-[100%] flex-1 flex-col gap-4 px-2">
       <div className="mt-4 flex items-center gap-2">
-        <Link to="/">
-          <ChevronLeft size={24} />
-        </Link>
         <h1 className="text-4xl font-bold">{json.name}</h1>
       </div>
       <div>{<View node={tree} />}</div>

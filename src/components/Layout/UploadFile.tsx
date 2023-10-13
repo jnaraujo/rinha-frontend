@@ -20,6 +20,8 @@ export default function UploadFile() {
     if (target.files && target.files[0]) {
       const file = target.files[0]
 
+      console.time("readFile")
+
       let reader = new FileReader()
       reader.onload = async function (e) {
         const result = e.target?.result as string
@@ -33,15 +35,13 @@ export default function UploadFile() {
 
         const length = await getJsonLength()
 
-        console.log("length", length)
-
-        console.time("store")
         setJson({
           name: file.name,
           size: file.size,
           length,
         })
-        console.timeEnd("store")
+
+        console.timeEnd("readFile")
 
         navigate("/json-viewer")
       }

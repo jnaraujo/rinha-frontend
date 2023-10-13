@@ -37,19 +37,18 @@ function getJsonLength(json) {
 function sliceJson(data, start, end) {
   if (Array.isArray(data)) {
     return data.slice(start, end);
-} else if (typeof data === "object") {
-    const slicedData = {};
-    for (const key in data) {
-        slicedData[key] = sliceJson(data[key], start, end);
-    }
-    return slicedData;
-} else {
-    return data;
-}
+  } else if (typeof data === "object") {
+      const slicedData = {};
+      for (const key in data) {
+          slicedData[key] = sliceJson(data[key], start, end);
+      }
+      return slicedData;
+  } else {
+      return data;
+  }
 }
 
 let jsonStore = null
-let slicedJsonStore = null
 
 onmessage = function (e) {
   const action = e.data.action
