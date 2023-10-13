@@ -1,88 +1,58 @@
-import { AutoSizer, List, WindowScroller } from "react-virtualized"
-import Primitive from "./Primitive"
-import Open from "./Open"
-import Close from "./Close"
+import { memo, useMemo } from "preact/compat"
+import { formatValue, isNumber } from "./helper"
+import clsx from "clsx"
 
-export default function View({
-  node: nodeList,
-}: {
-  node: {
-    distance: number
-    key: string
-    type: string
-    value?: string
-  }[]
-}) {
-  if (nodeList.length === 0) return null
+function View({ node }: { node: object }) {
+  if (node === null) return null
 
-  return (
-    <div className="flex-1">
-      <WindowScroller>
-        {({ height, isScrolling, onChildScroll, scrollTop }: any) => (
-          <AutoSizer disableHeight>
-            {({ width }: any) => {
-              const rowCount = nodeList.length
-              const ITEM_HEIGHT = 25
-              return (
-                <List
-                  autoHeight
-                  isScrolling={isScrolling}
-                  onScroll={onChildScroll}
-                  scrollTop={scrollTop}
-                  width={width}
-                  height={height}
-                  rowCount={rowCount}
-                  rowHeight={ITEM_HEIGHT}
-                  overscanRowCount={3}
-                  tabIndex={-1}
-                  rowRenderer={({ index, key, style }: any) => {
-                    const node = nodeList[index]
+  const entries = useMemo(() => {
+    if (!node) return []
 
-                    if (node.type === "objOpen" || node.type === "arrayOpen") {
-                      return (
-                        <Open
-                          key={key}
-                          distance={node.distance}
-                          title={node.key}
-                          style={style}
-                          type={node.type}
-                        />
-                      )
-                    }
+    return Object.entries(node)
+  }, [node])
 
-                    if (
-                      node.type === "objClose" ||
-                      node.type === "arrayClose"
-                    ) {
-                      return (
-                        <Close
-                          key={key}
-                          distance={node.distance}
-                          title={node.key}
-                          style={style}
-                          type={node.type}
-                        />
-                      )
-                    }
+  const list = useMemo(() => {
+    return entries.map(([key, value]) => {
+      if (typeof value !== "object" || value === null) {
+        return (
+          <li key={key} className="space-y-1">
+            <span
+              className={clsx({
+                "text-teal-600": !isNumber(key),
+                "text-zinc-400": isNumber(key),
+              })}
+            >
+              {key}:
+            </span>
+            <p className="inline break-all">{formatValue(value)}</p>
+          </li>
+        )
+      }
 
-                    if (node.type === "primitive") {
-                      return (
-                        <Primitive
-                          key={key}
-                          distance={node.distance}
-                          style={style}
-                          value={node.value}
-                          title={node.key}
-                        />
-                      )
-                    }
-                  }}
-                />
-              )
-            }}
-          </AutoSizer>
-        )}
-      </WindowScroller>
-    </div>
-  )
+      const isArray = Array.isArray(value)
+
+      return (
+        <div key={key} className="flex flex-col gap-1">
+          <li
+            className={clsx({
+              "text-teal-600": !isNumber(key),
+              "text-zinc-400": isNumber(key),
+            })}
+          >
+            {key}:<span className="text-rose-200">{isArray ? " [" : ""}</span>
+          </li>
+          <div className="ml-[1px] border-l-2 border-zinc-300 pl-4">
+            <View node={value} />
+          </div>
+          <span className="text-rose-200">{isArray ? "] " : ""}</span>
+        </div>
+      )
+    })
+  }, [entries])
+
+  if (entries.length === 0) return null
+
+  return <ul tabIndex={0}>{list}</ul>
 }
+
+export default memo(View, () => false)

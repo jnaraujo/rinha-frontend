@@ -1,86 +1,73 @@
 function isJsonValid(json) {
-  if (typeof json !== "string"){
+  if (typeof json !== "string") {
     return {
       isValid: false,
-      parsedJson: null
+      parsedJson: null,
     }
   }
 
   try {
-    const parse = JSON.parse(json);
-    const isValid = typeof parse === 'object';
+    const parse = JSON.parse(json)
+    const isValid = typeof parse === "object"
 
     return {
       isValid: isValid,
-      parsedJson: parse
+      parsedJson: parse,
     }
   } catch (e) {
     return {
       isValid: false,
-      parsedJson: null
+      parsedJson: null,
     }
   }
 }
 
-function render(node, distance = 0, arr=[]) {
-  if (node === null) return null
-
-  const entries = Object.entries(node)
-
-  if (entries.length === 0) return null
-
-  for(let i = 0; i < entries.length; i++) {
-    const [key, value] = entries[i]
-
-    if (typeof value !== "object" || value === null) {
-      arr.push({
-        key, value, type: "primitive",
-        distance,
-      })
-      continue;
-    }
-
-    const isArray = Array.isArray(value)
-
-    arr.push({
-      type: isArray ? "arrayOpen" : "objOpen",
-      key,
-      distance,
-    })
-
-    render(value, distance + 1, arr)
-
-    arr.push({
-      type: isArray ? "arrayClose" : "objClose",
-      key,
-      distance,
-    })
+function sliceJson(json, start, end) {
+  if (Array.isArray(json)) {
+    return json.slice(start, end)
   }
+
+  if (typeof json === "object") {
+    const slicedJson = {}
+    for (const key in json) {
+      slicedJson[key] = sliceJson(json[key], start, end)
+    }
+    return slicedJson
+  }
+
+  return json
 }
 
-onmessage = function(e) {
-  const action = e.data.action;
-  const json = e.data.data;
-  const id = e.data.id;
+onmessage = function (e) {
+  const action = e.data.action
+  const json = e.data.data
+  const id = e.data.id
 
   switch (action) {
-    case 'validate':
+    case "validate":
       console.time("validateJson")
-      const {isValid, parsedJson} = isJsonValid(json);
+      const { isValid, parsedJson } = isJsonValid(json)
       console.timeEnd("validateJson")
-      const arr = []
-      console.time("render")
-      render(parsedJson, 0, arr);
-      console.timeEnd("render")
 
       self.postMessage({
         id: id,
         isValid,
-        parsed: arr
-      });
-      break;
-    default:
-      self.postMessage('Unknown action');
-  }
+        parsed: parsedJson,
+      })
+      break
+    case "slice":
+      console.time("sliceJson")
+      const slicedJson = sliceJson(json, e.data.start, e.data.end)
+      console.timeEnd("sliceJson")
 
+      console.time("jPost")
+      self.postMessage({
+        id: id,
+        slicedJson,
+      })
+      console.timeEnd("jPost")
+      break
+    default:
+      self.postMessage("Unknown action")
+  }
 }

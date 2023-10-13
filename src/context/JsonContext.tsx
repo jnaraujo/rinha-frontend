@@ -7,6 +7,7 @@ interface IJsonContext {
     isValid: boolean
     parsed: any
   }>
+  sliceJson(json: any, start: number, end: number): Promise<any>
 }
 
 const JsonContext = createContext<IJsonContext>({} as IJsonContext)
@@ -24,6 +25,28 @@ export function JsonProvider({ children }: { children: ReactNode }) {
       worker.current = null
     }
   }, [])
+
+  function sliceJson(json: string, start: number, end: number) {
+    return new Promise<any>((resolve) => {
+      if (!worker.current) return resolve(null)
+
+      const id = Math.random()
+
+      worker.current?.postMessage({
+        id,
+        action: "slice",
+        data: json,
+        start,
+        end,
+      })
+
+      worker.current.onmessage = (event) => {
+        if (event.data.id !== id) return
+
+        resolve(event.data.slicedJson)
+      }
+    })
+  }
 
   function isJsonValid(json: string) {
     return new Promise<{
@@ -56,7 +79,7 @@ export function JsonProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <JsonContext.Provider value={{ isJsonValid }}>
+    <JsonContext.Provider value={{ isJsonValid, sliceJson }}>
       {children}
     </JsonContext.Provider>
   )
