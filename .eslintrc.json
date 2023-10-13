@@ -1,0 +1,31 @@
+{
+  "env": {
+      "browser": true,
+      "es2021": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+      "plugin:react/recommended",
+      "plugin:prettier/recommended"
+  ],
+  "parserOptions": {
+      "project": "./tsconfig.json"
+  },
+  "overrides": [
+  ],
+  "plugins": [
+      "react",
+      "prettier"
+  ],
+  "ignorePatterns": [
+      "node_modules",
+      "dist",
+      "postcss.config.js",
+      "tailwind.config.js",
+      "vite.config.ts",
+      "public"
+  ],
+  "rules": {
+      "react/react-in-jsx-scope": "off"
+  }
+}
