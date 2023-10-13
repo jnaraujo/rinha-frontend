@@ -1,10 +1,9 @@
 import { create } from "zustand"
 
 interface JsonData {
-  raw: string
-  parsed: any
   name: string
   size: number
+  length: number
 }
 
 interface JsonStore {

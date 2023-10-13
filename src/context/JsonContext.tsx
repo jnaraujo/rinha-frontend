@@ -3,11 +3,9 @@ import { ReactNode } from "preact/compat"
 import { useContext, useEffect, useRef } from "preact/hooks"
 
 interface IJsonContext {
-  isJsonValid(json: string): Promise<{
-    isValid: boolean
-    parsed: any
-  }>
-  sliceJson(json: any, start: number, end: number): Promise<any>
+  isJsonValid(json: string): Promise<boolean>
+  sliceJson(start: number, end: number): Promise<any>
+  getJsonLength(): Promise<number>
 }
 
 const JsonContext = createContext<IJsonContext>({} as IJsonContext)
@@ -26,7 +24,7 @@ export function JsonProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  function sliceJson(json: string, start: number, end: number) {
+  function sliceJson(start: number, end: number) {
     return new Promise<any>((resolve) => {
       if (!worker.current) return resolve(null)
 
@@ -35,29 +33,42 @@ export function JsonProvider({ children }: { children: ReactNode }) {
       worker.current?.postMessage({
         id,
         action: "slice",
-        data: json,
         start,
         end,
       })
 
+      console.time("onmessagesliceJson")
       worker.current.onmessage = (event) => {
         if (event.data.id !== id) return
+
+        console.timeEnd("onmessagesliceJson")
 
         resolve(event.data.slicedJson)
       }
     })
   }
 
+  function getJsonLength() {
+    return new Promise<number>((resolve) => {
+      if (!worker.current) return 0
+
+      const id = Math.random()
+
+      worker.current?.postMessage({
+        id,
+        action: "getLength",
+      })
+
+      worker.current.onmessage = (event) => {
+        if (event.data.id !== id) return
+        resolve(event.data.length)
+      }
+    })
+  }
+
   function isJsonValid(json: string) {
-    return new Promise<{
-      isValid: boolean
-      parsed: any
-    }>((resolve) => {
-      if (!worker.current)
-        return resolve({
-          isValid: false,
-          parsed: null,
-        })
+    return new Promise<boolean>((resolve) => {
+      if (!worker.current) return resolve(false)
 
       const id = Math.random()
 
@@ -70,16 +81,13 @@ export function JsonProvider({ children }: { children: ReactNode }) {
       worker.current.onmessage = (event) => {
         if (event.data.id !== id) return
 
-        resolve({
-          isValid: event.data.isValid,
-          parsed: event.data.parsed,
-        })
+        resolve(event.data.isValid)
       }
     })
   }
 
   return (
-    <JsonContext.Provider value={{ isJsonValid, sliceJson }}>
+    <JsonContext.Provider value={{ isJsonValid, sliceJson, getJsonLength }}>
       {children}
     </JsonContext.Provider>
   )

@@ -5,7 +5,7 @@ import { jsonStore } from "../../store/json-store"
 import { useNavigate } from "react-router-dom"
 
 export default function UploadFile() {
-  const { isJsonValid } = useJson()
+  const { isJsonValid, getJsonLength } = useJson()
   const { setJson } = jsonStore()
   const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -24,19 +24,22 @@ export default function UploadFile() {
       reader.onload = async function (e) {
         const result = e.target?.result as string
 
-        const res = await isJsonValid(result)
+        const isValid = await isJsonValid(result)
 
-        if (!res.isValid) {
+        if (!isValid) {
           setError("Invalid file. Please load a valid JSON file.")
           return
         }
 
+        const length = await getJsonLength()
+
+        console.log("length", length)
+
         console.time("store")
         setJson({
-          raw: result,
-          parsed: res.parsed,
           name: file.name,
           size: file.size,
+          length,
         })
         console.timeEnd("store")
 

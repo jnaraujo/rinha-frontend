@@ -2,7 +2,11 @@ import { memo, useMemo } from "preact/compat"
 import { formatValue, isNumber } from "./helper"
 import clsx from "clsx"
 
-function View({ node }: { node: object }) {
+interface Props {
+  node: object
+}
+
+function View({ node }: Props) {
   if (node === null) return null
 
   const entries = useMemo(() => {
@@ -11,11 +15,15 @@ function View({ node }: { node: object }) {
     return Object.entries(node)
   }, [node])
 
+  let index = 0
+
   const list = useMemo(() => {
     return entries.map(([key, value]) => {
+      index++
+
       if (typeof value !== "object" || value === null) {
         return (
-          <li key={key} className="space-y-1">
+          <li key={`tag-${index - 1}`} className="space-y-1">
             <span
               className={clsx({
                 "text-teal-600": !isNumber(key),
@@ -32,7 +40,7 @@ function View({ node }: { node: object }) {
       const isArray = Array.isArray(value)
 
       return (
-        <div key={key} className="flex flex-col gap-1">
+        <div key={`view-${index - 1}`} className="flex flex-col gap-1">
           <li
             className={clsx({
               "text-teal-600": !isNumber(key),

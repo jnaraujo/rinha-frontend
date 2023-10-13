@@ -22,21 +22,34 @@ function isJsonValid(json) {
   }
 }
 
-function sliceJson(json, start, end) {
+function getJsonLength(json) {
   if (Array.isArray(json)) {
-    return json.slice(start, end)
+    return json.length
   }
 
   if (typeof json === "object") {
-    const slicedJson = {}
-    for (const key in json) {
-      slicedJson[key] = sliceJson(json[key], start, end)
-    }
-    return slicedJson
+    return Object.keys(json).length
   }
 
-  return json
+  return 0
 }
+
+function sliceJson(data, start, end) {
+  if (Array.isArray(data)) {
+    return data.slice(start, end);
+} else if (typeof data === "object") {
+    const slicedData = {};
+    for (const key in data) {
+        slicedData[key] = sliceJson(data[key], start, end);
+    }
+    return slicedData;
+} else {
+    return data;
+}
+}
+
+let jsonStore = null
+let slicedJsonStore = null
 
 onmessage = function (e) {
   const action = e.data.action
@@ -48,24 +61,31 @@ onmessage = function (e) {
       console.time("validateJson")
       const { isValid, parsedJson } = isJsonValid(json)
       console.timeEnd("validateJson")
+      
+      jsonStore = parsedJson
 
       self.postMessage({
         id: id,
-        isValid,
-        parsed: parsedJson,
+        isValid
       })
       break
     case "slice":
-      console.time("sliceJson")
-      const slicedJson = sliceJson(json, e.data.start, e.data.end)
-      console.timeEnd("sliceJson")
+      const slicedJson = sliceJson(jsonStore, e.data.start, e.data.end)
 
-      console.time("jPost")
       self.postMessage({
         id: id,
-        slicedJson,
+        slicedJson: slicedJson,
       })
-      console.timeEnd("jPost")
+      break
+    case "getLength":
+      const length = getJsonLength(jsonStore)
+
+      console.log("length", length);
+
+      self.postMessage({
+        id: id,
+        length,
+      })
       break
     default:
       self.postMessage("Unknown action")
