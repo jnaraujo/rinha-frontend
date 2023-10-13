@@ -22,18 +22,6 @@ function isJsonValid(json) {
   }
 }
 
-function getJsonLength(json) {
-  if (Array.isArray(json)) {
-    return json.length
-  }
-
-  if (typeof json === "object") {
-    return Object.keys(json).length
-  }
-
-  return 0
-}
-
 function sliceJson(data, start, end) {
   if (Array.isArray(data)) {
     return data.slice(start, end);
@@ -68,20 +56,15 @@ onmessage = function (e) {
         isValid
       })
       break
+    case "load":
+      jsonStore = json
+      break
     case "slice":
       const slicedJson = sliceJson(jsonStore, e.data.start, e.data.end)
 
       self.postMessage({
         id: id,
         slicedJson: slicedJson,
-      })
-      break
-    case "getLength":
-      const length = getJsonLength(jsonStore)
-
-      self.postMessage({
-        id: id,
-        length,
       })
       break
     default:

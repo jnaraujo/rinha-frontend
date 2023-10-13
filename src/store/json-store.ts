@@ -3,7 +3,6 @@ import { create } from "zustand"
 interface JsonData {
   name: string
   size: number
-  length: number
 }
 
 interface JsonStore {

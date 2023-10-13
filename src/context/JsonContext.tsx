@@ -5,7 +5,7 @@ import { useContext, useEffect, useRef } from "preact/hooks"
 interface IJsonContext {
   isJsonValid(json: string): Promise<boolean>
   sliceJson(start: number, end: number): Promise<any>
-  getJsonLength(): Promise<number>
+  load(json: any): void
 }
 
 const JsonContext = createContext<IJsonContext>({} as IJsonContext)
@@ -44,21 +44,13 @@ export function JsonProvider({ children }: { children: ReactNode }) {
     })
   }
 
-  function getJsonLength() {
-    return new Promise<number>((resolve) => {
-      if (!worker.current) return 0
+  function load(json: any) {
+    const id = Math.random()
 
-      const id = Math.random()
-
-      worker.current?.postMessage({
-        id,
-        action: "getLength",
-      })
-
-      worker.current.onmessage = (event) => {
-        if (event.data.id !== id) return
-        resolve(event.data.length)
-      }
+    worker.current?.postMessage({
+      id,
+      action: "load",
+      data: json,
     })
   }
 
@@ -83,7 +75,7 @@ export function JsonProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <JsonContext.Provider value={{ isJsonValid, sliceJson, getJsonLength }}>
+    <JsonContext.Provider value={{ isJsonValid, sliceJson, load }}>
       {children}
     </JsonContext.Provider>
   )

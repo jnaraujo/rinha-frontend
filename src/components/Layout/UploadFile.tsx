@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom"
 import { Loader2 } from "lucide-preact"
 
 export default function UploadFile() {
-  const { isJsonValid, getJsonLength } = useJson()
+  const { isJsonValid } = useJson()
   const { setJson } = jsonStore()
   const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -36,12 +36,9 @@ export default function UploadFile() {
           return
         }
 
-        const length = await getJsonLength()
-
         setJson({
           name: file.name,
           size: file.size,
-          length,
         })
 
         navigate("/json-viewer")
