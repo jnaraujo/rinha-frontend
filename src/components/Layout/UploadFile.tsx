@@ -3,6 +3,7 @@ import type { TargetedEvent } from "preact/compat"
 import { useJson } from "../../context/JsonContext"
 import { jsonStore } from "../../store/json-store"
 import { useNavigate } from "react-router-dom"
+import { Loader2 } from "lucide-preact"
 
 export default function UploadFile() {
   const { isJsonValid, getJsonLength } = useJson()
@@ -10,17 +11,18 @@ export default function UploadFile() {
   const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement>(null)
   const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   function handleFileChange(event: TargetedEvent<HTMLInputElement, Event>) {
     setError(null)
+    setLoading(true)
+
     const target = event.target as HTMLInputElement & {
       files: FileList
     }
 
     if (target.files && target.files[0]) {
       const file = target.files[0]
-
-      console.time("readFile")
 
       let reader = new FileReader()
       reader.onload = async function (e) {
@@ -30,6 +32,7 @@ export default function UploadFile() {
 
         if (!isValid) {
           setError("Invalid file. Please load a valid JSON file.")
+          setLoading(false)
           return
         }
 
@@ -41,12 +44,14 @@ export default function UploadFile() {
           length,
         })
 
-        console.timeEnd("readFile")
+        setLoading(false)
 
         navigate("/json-viewer")
       }
 
       reader.readAsText(file)
+    } else {
+      setLoading(false)
     }
 
     ;(event.target as any).value = null // reset input
@@ -69,10 +74,17 @@ export default function UploadFile() {
           <label htmlFor="jsonInput">
             <button
               type="button"
-              className="mx-auto rounded-md bg-zinc-950 px-4 py-2 text-zinc-100 transition-all duration-300 ease-in-out hover:bg-zinc-800 hover:shadow-lg"
+              disabled={loading}
+              className="mx-auto rounded-md bg-zinc-950 px-4 py-2 text-zinc-100 transition-all duration-300 ease-in-out hover:bg-zinc-800  hover:shadow-lg disabled:cursor-progress disabled:bg-zinc-700 disabled:text-zinc-100 disabled:hover:shadow-none"
               onClick={handleClick}
             >
-              Select JSON file
+              {loading ? (
+                <span className="flex gap-2">
+                  <Loader2 className="animate-spin" /> Loading file...
+                </span>
+              ) : (
+                "Select JSON file"
+              )}
             </button>
           </label>
           <input
