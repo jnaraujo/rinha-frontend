@@ -5,7 +5,7 @@ export interface JsonNode {
   distance: number
 }
 
-export function render(node: any, arr: JsonNode[] = [], distance = 0) {
+export function parse(node: any, arr: JsonNode[] = [], distance = 0) {
   if (node === null) return []
 
   const entries = Object.entries(node)
@@ -34,7 +34,7 @@ export function render(node: any, arr: JsonNode[] = [], distance = 0) {
     })
 
     if (value !== null) {
-      render(value, arr, distance + 1)
+      parse(value, arr, distance + 1)
     }
 
     if (isArray) {

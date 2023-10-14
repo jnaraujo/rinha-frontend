@@ -1,7 +1,7 @@
 import { jsonStore } from "../../store/json-store"
 import { useNavigate } from "react-router-dom"
 import { Loader2 } from "lucide-react"
-import { render } from "../../lib/json"
+import { parse } from "../../lib/json"
 import { useRef, useState } from "react"
 
 export default function UploadFile() {
@@ -31,7 +31,7 @@ export default function UploadFile() {
 
           setJson({
             name: file.name,
-            nodeList: render(parsed),
+            nodeList: parse(parsed),
           })
           navigate("/json-viewer")
         } catch (error) {
