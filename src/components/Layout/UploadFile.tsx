@@ -32,11 +32,11 @@ export default function UploadFile() {
             name: file.name,
             parsed,
           })
+          navigate("/json-viewer")
         } catch (error) {
           setError("Invalid file. Please load a valid JSON file.")
         } finally {
           setLoading(false)
-          navigate("/json-viewer")
         }
       }
 
