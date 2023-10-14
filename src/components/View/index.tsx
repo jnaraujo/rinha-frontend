@@ -33,15 +33,15 @@ function View({ node, style }: Props) {
           <div
             role="none"
             key={i}
-            className="ml-[2px] mr-4 h-full w-[2px] bg-zinc-300"
+            className="bg-gray ml-[2px] mr-4 h-full w-[2px]"
           />
         ))}
       </div>
 
       <div
         className={clsx("flex gap-1", {
-          "text-teal-600": !isNumber(key),
-          "text-zinc-400": isNumber(key),
+          "text-accent": !isNumber(key),
+          "text-gray": isNumber(key),
         })}
       >
         {type !== "arrayClose" ? (
@@ -53,7 +53,7 @@ function View({ node, style }: Props) {
         ) : null}
 
         {type === "arrayEnter" ? (
-          <span className="text-rose-200" role="none">
+          <span className="text-brackets" role="none">
             {" ["}
           </span>
         ) : null}
@@ -71,7 +71,7 @@ function View({ node, style }: Props) {
       ) : null}
 
       {type === "arrayClose" ? (
-        <span className="text-rose-200">{"] "}</span>
+        <span className="text-brackets">{"] "}</span>
       ) : null}
     </li>
   )

@@ -55,7 +55,7 @@ export default function UploadFile() {
   }
 
   return (
-    <section className="flex flex-1 items-center justify-center bg-zinc-100">
+    <section className="flex flex-1 items-center justify-center">
       <form
         className="space-y-4 text-center"
         aria-label="Upload JSON file"

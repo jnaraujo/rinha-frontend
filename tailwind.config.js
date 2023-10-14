@@ -8,6 +8,13 @@ export default {
       fontFamily: {
         sans: ["Inter", fontFamily.sans],
       },
+      
+      colors: {
+        invalid: "#BF0E0E",
+        accent: "#4E9590",
+        brackets: "#F2CAB8",
+        gray: "#BFBFBF"
+      }
     },
   },
   plugins: [],
