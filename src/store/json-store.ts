@@ -1,8 +1,9 @@
 import { create } from "zustand"
+import { JsonNode } from "../lib/json"
 
 interface JsonData {
   name: string
-  parsed: string
+  nodeList: JsonNode[]
 }
 
 interface JsonStore {

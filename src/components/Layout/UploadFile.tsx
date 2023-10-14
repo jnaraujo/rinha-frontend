@@ -3,7 +3,7 @@ import type { TargetedEvent } from "preact/compat"
 import { jsonStore } from "../../store/json-store"
 import { useNavigate } from "react-router-dom"
 import { Loader2 } from "lucide-preact"
-
+import { render } from "../../lib/json"
 export default function UploadFile() {
   const { setJson } = jsonStore()
   const navigate = useNavigate()
@@ -30,7 +30,7 @@ export default function UploadFile() {
           const parsed = JSON.parse(result)
           setJson({
             name: file.name,
-            parsed,
+            nodeList: render(parsed),
           })
           navigate("/json-viewer")
         } catch (error) {

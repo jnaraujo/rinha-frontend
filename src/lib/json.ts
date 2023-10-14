@@ -1,34 +1,48 @@
-export function sliceJson(data: any, start: number, end: number) {
-  if (Array.isArray(data)) {
-    return data.slice(start, end)
-  } else if (typeof data === "object") {
-    const slicedData = {} as any
-
-    for (const key in data) {
-      slicedData[key] = sliceJson(data[key], start, end)
-    }
-    return slicedData
-  } else {
-    return data
-  }
+export interface JsonNode {
+  key: string
+  value?: any
+  type: "primitive" | "arrayEnter" | "arrayClose" | "objectEnter"
+  distance: number
 }
 
-export function mergeJson(data: any, newData: any) {
-  if (Array.isArray(data)) {
-    if (Array.isArray(newData)) {
-      return [...data, ...newData]
-    } else {
-      return data // Keep the existing array if newData is not an array.
-    }
-  } else if (typeof data === "object" && typeof newData === "object") {
-    const mergedData = { ...data }
+export function render(node: any, arr: any = [], distance = 0) {
+  if (node === null) return arr
 
-    for (const key in newData) {
-      mergedData[key] = mergeJson(data[key], newData[key])
+  const entries = Object.entries(node)
+
+  if (entries.length === 0) return null
+
+  for (let i = 0; i < entries.length; i++) {
+    const [key, value] = entries[i]
+
+    if (typeof value !== "object" || value === null) {
+      arr.push({
+        key,
+        value,
+        type: "primitive",
+        distance,
+      })
+      continue
     }
 
-    return mergedData
-  } else {
-    return newData !== undefined ? newData : data
+    const isArray = Array.isArray(value)
+
+    arr.push({
+      type: isArray ? "arrayEnter" : "objectEnter",
+      key,
+      distance,
+    })
+
+    render(value, arr, distance + 1)
+
+    if (isArray) {
+      arr.push({
+        type: "arrayClose",
+        key,
+        distance,
+      })
+    }
   }
+
+  return arr
 }
