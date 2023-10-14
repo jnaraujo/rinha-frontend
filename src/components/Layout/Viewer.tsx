@@ -2,7 +2,7 @@ import { jsonStore } from "../../store/json-store"
 import View from "../JsonView/View"
 import { useNavigate } from "react-router-dom"
 import Virtualized from "../Virtualized"
-import { useEffect } from "preact/hooks"
+import { useEffect } from "react"
 
 export default function Viewer() {
   const navigate = useNavigate()

@@ -1,7 +1,7 @@
 import { formatValue, isNumber } from "./helper"
 import clsx from "clsx"
 import { JsonNode } from "../../lib/json"
-import { memo } from "preact/compat"
+import { memo } from "react"
 
 interface Props {
   node: JsonNode

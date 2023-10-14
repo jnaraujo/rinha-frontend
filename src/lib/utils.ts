@@ -1,8 +1,11 @@
-export const throttle = (fn, wait) => {
-  let inThrottle, lastFn, lastTime
+export const throttle = (fn: any, wait: number) => {
+  let inThrottle: boolean, lastFn: any, lastTime: number
+
   return function () {
-    const context = this,
-      args = arguments
+    // @ts-ignore
+    const context = this
+
+    const args = arguments
     if (!inThrottle) {
       fn.apply(context, args)
       lastTime = Date.now()

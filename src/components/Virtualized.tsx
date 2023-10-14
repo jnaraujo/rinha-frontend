@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "preact/hooks"
+import { type ReactNode, useState, useRef, useEffect, useMemo } from "react"
 import { throttle } from "../lib/utils"
-import { ReactNode } from "preact/compat"
 
 interface Props<T> {
   itemHeight: number
@@ -73,12 +72,12 @@ export default function Virtualized<T>({
       })
     }
 
-    // const throttled = throttle(handleScroll, 100)
+    const throttled = throttle(handleScroll, 100)
 
-    window.addEventListener("scroll", handleScroll)
+    window.addEventListener("scroll", throttled)
 
     return () => {
-      window.removeEventListener("scroll", handleScroll)
+      window.removeEventListener("scroll", throttled)
     }
   }, [])
 

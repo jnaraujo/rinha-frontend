@@ -1,6 +1,4 @@
-import { createContext } from "preact"
-import { ReactNode } from "preact/compat"
-import { useContext, useRef } from "preact/hooks"
+import { type ReactNode, createContext, useContext, useRef } from "react"
 
 interface IJsonContext {
   isJsonValid(json: string): boolean

@@ -1,9 +1,9 @@
-import { useRef, useState } from "preact/hooks"
-import type { TargetedEvent } from "preact/compat"
 import { jsonStore } from "../../store/json-store"
 import { useNavigate } from "react-router-dom"
-import { Loader2 } from "lucide-preact"
+import { Loader2 } from "lucide-react"
 import { render } from "../../lib/json"
+import { useRef, useState } from "react"
+
 export default function UploadFile() {
   const { setJson } = jsonStore()
   const navigate = useNavigate()
@@ -11,7 +11,7 @@ export default function UploadFile() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  function handleFileChange(event: TargetedEvent<HTMLInputElement, Event>) {
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     setError(null)
     setLoading(true)
 
