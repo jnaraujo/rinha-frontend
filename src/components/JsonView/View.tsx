@@ -14,14 +14,12 @@ function View({ node, style }: Props) {
   const { key, value, type, distance } = node
 
   return (
-    <li
-      className="relative flex h-7 items-center gap-1"
-      style={style}
-      tabIndex={0}
-    >
-      {[...Array(distance)].map((_, i) => (
-        <div key={i} className="ml-1 mr-2 h-full w-[2px] bg-zinc-300" />
-      ))}
+    <li className="relative flex h-7 items-center" style={style} tabIndex={0}>
+      <div className="flex h-full shrink-0 items-center">
+        {[...Array(distance)].map((_, i) => (
+          <div key={i} className="ml-[2px] mr-4 h-full w-[2px] bg-zinc-300" />
+        ))}
+      </div>
 
       <span
         className={clsx({

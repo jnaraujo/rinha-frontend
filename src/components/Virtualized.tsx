@@ -6,7 +6,6 @@ interface Props<T> {
   itemCount: number
   render: (index: number, style: any, data: T) => ReactNode
   overscan?: number
-  threshold?: number
   data?: T[]
 }
 
@@ -16,7 +15,6 @@ export default function Virtualized<T>({
   render,
   data,
   overscan = 40,
-  threshold = 20,
 }: Props<T>) {
   const ref = useRef<HTMLDivElement>(null)
   const [from, setFrom] = useState(0)
@@ -55,21 +53,8 @@ export default function Virtualized<T>({
       )
       const to = Math.min(from + itemsOnScreen + overscan / 2, itemCount - 1)
 
-      setFrom((prev) => {
-        if (threshold > Math.abs(prev - from) && prev) {
-          return prev
-        }
-
-        return from
-      })
-
-      setTo((prev) => {
-        if (threshold > Math.abs(prev - to) && prev) {
-          return prev
-        }
-
-        return to
-      })
+      setFrom(from)
+      setTo(to)
     }
 
     const throttled = throttle(handleScroll, 100)
