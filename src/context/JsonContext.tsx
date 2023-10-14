@@ -1,10 +1,10 @@
 import { createContext } from "preact"
 import { ReactNode } from "preact/compat"
-import { useContext, useEffect, useRef } from "preact/hooks"
+import { useContext, useRef } from "preact/hooks"
 
 interface IJsonContext {
-  isJsonValid(json: string): Promise<boolean>
-  sliceJson(start: number, end: number): Promise<any>
+  isJsonValid(json: string): boolean
+  sliceJson(start: number, end: number): any
   load(json: any): void
 }
 
@@ -13,65 +13,30 @@ const JsonContext = createContext<IJsonContext>({} as IJsonContext)
 export const useJson = () => useContext(JsonContext)
 
 export function JsonProvider({ children }: { children: ReactNode }) {
-  const worker = useRef<Worker | null>(null)
-
-  useEffect(() => {
-    worker.current = new Worker("/json.worker.js")
-
-    return () => {
-      worker.current?.terminate()
-      worker.current = null
-    }
-  }, [])
+  const jsonStore = useRef<any>(null)
 
   function sliceJson(start: number, end: number) {
-    return new Promise<any>((resolve) => {
-      if (!worker.current) return resolve(null)
+    if (!jsonStore.current) return null
 
-      const id = Math.random()
+    const slicedJson = _sliceJson(jsonStore.current, start, end)
 
-      worker.current?.postMessage({
-        id,
-        action: "slice",
-        start,
-        end,
-      })
-
-      worker.current.onmessage = (event) => {
-        if (event.data.id !== id) return
-        resolve(event.data.slicedJson)
-      }
-    })
+    return slicedJson
   }
 
   function load(json: any) {
-    const id = Math.random()
-
-    worker.current?.postMessage({
-      id,
-      action: "load",
-      data: json,
-    })
+    jsonStore.current = json
   }
 
   function isJsonValid(json: string) {
-    return new Promise<boolean>((resolve) => {
-      if (!worker.current) return resolve(false)
+    try {
+      const parse = JSON.parse(json)
 
-      const id = Math.random()
+      load(parse)
 
-      worker.current?.postMessage({
-        id,
-        action: "validate",
-        data: json,
-      })
-
-      worker.current.onmessage = (event) => {
-        if (event.data.id !== id) return
-
-        resolve(event.data.isValid)
-      }
-    })
+      return true
+    } catch (e) {
+      return false
+    }
   }
 
   return (
@@ -79,4 +44,19 @@ export function JsonProvider({ children }: { children: ReactNode }) {
       {children}
     </JsonContext.Provider>
   )
+}
+
+function _sliceJson(data: any, start: number, end: number) {
+  if (Array.isArray(data)) {
+    return data.slice(start, end)
+  } else if (typeof data === "object") {
+    const slicedData = {} as any
+
+    for (const key in data) {
+      slicedData[key] = _sliceJson(data[key], start, end)
+    }
+    return slicedData
+  } else {
+    return data
+  }
 }

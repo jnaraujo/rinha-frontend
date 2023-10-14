@@ -1,12 +1,10 @@
 import { useRef, useState } from "preact/hooks"
 import type { TargetedEvent } from "preact/compat"
-import { useJson } from "../../context/JsonContext"
 import { jsonStore } from "../../store/json-store"
 import { useNavigate } from "react-router-dom"
 import { Loader2 } from "lucide-preact"
 
 export default function UploadFile() {
-  const { isJsonValid } = useJson()
   const { setJson } = jsonStore()
   const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -28,20 +26,18 @@ export default function UploadFile() {
       reader.onload = async function (e) {
         const result = e.target?.result as string
 
-        const isValid = await isJsonValid(result)
-
-        if (!isValid) {
+        try {
+          const parsed = JSON.parse(result)
+          setJson({
+            name: file.name,
+            parsed,
+          })
+        } catch (error) {
           setError("Invalid file. Please load a valid JSON file.")
+        } finally {
           setLoading(false)
-          return
+          navigate("/json-viewer")
         }
-
-        setJson({
-          name: file.name,
-          size: file.size,
-        })
-
-        navigate("/json-viewer")
       }
 
       reader.readAsText(file)
