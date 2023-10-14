@@ -1,5 +1,5 @@
 import { jsonStore } from "../../store/json-store"
-import View from "../JsonView/View"
+import View from "../View"
 import { useNavigate } from "react-router-dom"
 import Virtualized from "../Virtualized"
 import { useEffect } from "react"
