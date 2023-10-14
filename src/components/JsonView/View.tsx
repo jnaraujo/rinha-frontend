@@ -39,7 +39,7 @@ function View({ node, style }: Props) {
       </div>
 
       <div
-        className={clsx({
+        className={clsx("flex gap-1", {
           "text-teal-600": !isNumber(key),
           "text-zinc-400": isNumber(key),
         })}
