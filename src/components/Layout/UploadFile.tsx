@@ -71,7 +71,8 @@ export default function UploadFile() {
             <button
               type="button"
               disabled={loading}
-              className="mx-auto rounded-md bg-zinc-950 px-4 py-2 text-zinc-100 transition-all duration-300 ease-in-out hover:bg-zinc-800  hover:shadow-lg disabled:cursor-progress disabled:bg-zinc-700 disabled:text-zinc-100 disabled:hover:shadow-none"
+              className="mx-auto rounded-md border border-black bg-gradient-to-r from-[#E4E4E4]
+              to-[#F7F7F7] px-2 py-1 text-black transition-all duration-200 hover:drop-shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
               onClick={handleClick}
               aria-label="Select JSON file"
             >
@@ -80,7 +81,7 @@ export default function UploadFile() {
                   <Loader2 className="animate-spin" /> Loading file...
                 </span>
               ) : (
-                "Select JSON file"
+                "Load JSON"
               )}
             </button>
           </label>
