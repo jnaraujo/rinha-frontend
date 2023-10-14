@@ -28,6 +28,7 @@ export default function UploadFile() {
 
         try {
           const parsed = JSON.parse(result)
+
           setJson({
             name: file.name,
             nodeList: render(parsed),

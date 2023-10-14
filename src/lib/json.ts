@@ -5,12 +5,12 @@ export interface JsonNode {
   distance: number
 }
 
-export function render(node: any, arr: any = [], distance = 0) {
-  if (node === null) return arr
+export function render(node: any, arr: JsonNode[] = [], distance = 0) {
+  if (node === null) return []
 
   const entries = Object.entries(node)
 
-  if (entries.length === 0) return null
+  if (entries.length === 0) return []
 
   for (let i = 0; i < entries.length; i++) {
     const [key, value] = entries[i]
@@ -33,7 +33,9 @@ export function render(node: any, arr: any = [], distance = 0) {
       distance,
     })
 
-    render(value, arr, distance + 1)
+    if (value !== null) {
+      render(value, arr, distance + 1)
+    }
 
     if (isArray) {
       arr.push({
