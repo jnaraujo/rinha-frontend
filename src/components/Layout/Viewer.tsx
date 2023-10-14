@@ -18,15 +18,15 @@ export default function Viewer() {
   if (!json.nodeList) return null
 
   return (
-    <section className="mx-auto flex w-[638px] max-w-[100%] flex-1 flex-col gap-4 px-2">
+    <section className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 px-2">
       <div className="mt-4 flex items-center gap-2">
         <h1 className="text-4xl font-bold">{json.name}</h1>
       </div>
       <Virtualized
         data={json.nodeList}
         itemHeight={28}
-        overscan={20}
-        threshold={10}
+        overscan={14}
+        threshold={7}
         itemCount={json.nodeList.length}
         render={(index, style, node) => {
           return <View key={index} node={node} style={style} />

@@ -36,7 +36,9 @@ function View({ node, style }: Props) {
       </span>
 
       {type === "primitive" ? (
-        <p className="inline break-all">{formatValue(value)}</p>
+        <p title={value} className="line-clamp-1">
+          {formatValue(value)}
+        </p>
       ) : null}
 
       {type === "arrayClose" ? (
