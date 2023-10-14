@@ -18,8 +18,10 @@ export default function Virtualized<T>({
   ...rest
 }: Props<T>) {
   const ref = useRef<HTMLDivElement>(null)
-  const [from, setFrom] = useState(0)
-  const [to, setTo] = useState(0)
+  const [range, setRange] = useState({
+    from: 0,
+    to: 0,
+  })
 
   useEffect(() => {
     if (!ref.current) return
@@ -54,8 +56,10 @@ export default function Virtualized<T>({
       )
       const to = Math.min(from + itemsOnScreen + overscan / 2, itemCount - 1)
 
-      setFrom(from)
-      setTo(to)
+      setRange({
+        from,
+        to,
+      })
     }
 
     const throttled = throttle(handleScroll, 100)
@@ -70,7 +74,7 @@ export default function Virtualized<T>({
   const items = useMemo(() => {
     const items = []
 
-    for (let i = from; i <= to; i++) {
+    for (let i = range.from; i <= range.to; i++) {
       items.push(
         render(
           i,
@@ -86,7 +90,7 @@ export default function Virtualized<T>({
     }
 
     return items
-  }, [from, to])
+  }, [range.from, range.to, data])
 
   return (
     <div
