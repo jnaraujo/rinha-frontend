@@ -27,6 +27,8 @@ export default function Viewer() {
         itemHeight={28}
         overscan={20}
         itemCount={json.nodeList.length}
+        role="list"
+        aria-label={`Tree view of ${json.name} file`}
         render={(index, style, node) => {
           return (
             <div key={index} style={style}>

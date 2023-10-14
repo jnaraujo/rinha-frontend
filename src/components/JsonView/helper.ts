@@ -9,7 +9,7 @@ export function formatValue(value: any) {
     case "object":
       return "null"
     default:
-      return value.toString()
+      return value
   }
 }
 

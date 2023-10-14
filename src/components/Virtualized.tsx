@@ -1,7 +1,7 @@
 import { type ReactNode, useState, useRef, useEffect, useMemo } from "react"
 import { throttle } from "../lib/utils"
 
-interface Props<T> {
+interface Props<T> extends React.HTMLAttributes<HTMLDivElement> {
   itemHeight: number
   itemCount: number
   render: (index: number, style: any, data: T) => ReactNode
@@ -15,6 +15,7 @@ export default function Virtualized<T>({
   render,
   data,
   overscan = 40,
+  ...rest
 }: Props<T>) {
   const ref = useRef<HTMLDivElement>(null)
   const [from, setFrom] = useState(0)
@@ -95,6 +96,7 @@ export default function Virtualized<T>({
         height: itemCount * itemHeight,
       }}
       ref={ref}
+      {...rest}
     >
       {items}
     </div>
