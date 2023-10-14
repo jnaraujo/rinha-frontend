@@ -25,8 +25,8 @@ export default function Viewer() {
       <Virtualized
         data={json.nodeList}
         itemHeight={28}
-        overscan={14}
-        threshold={7}
+        overscan={40}
+        threshold={20}
         itemCount={json.nodeList.length}
         render={(index, style, node) => {
           return <View key={index} node={node} style={style} />
