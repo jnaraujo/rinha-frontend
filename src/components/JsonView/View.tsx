@@ -16,40 +16,34 @@ function View({ node }: Props) {
   }, [node])
 
   const list = useMemo(() => {
-    return entries.map(([key, value], index) => {
-      if (typeof value !== "object" || value === null) {
-        return (
-          <li key={`tag-${index}`} className="space-y-1">
-            <span
-              className={clsx({
-                "text-teal-600": !isNumber(key),
-                "text-zinc-400": isNumber(key),
-              })}
-            >
-              {key}:
-            </span>
-            <p className="ml-1 inline break-all">{formatValue(value)}</p>
-          </li>
-        )
-      }
-
+    return entries.map(([key, value]) => {
       const isArray = Array.isArray(value)
+      const isPrimitive = typeof value !== "object" || value === null
 
       return (
-        <div key={`view-${index}`} className="flex flex-col gap-1">
-          <li
+        <li key={key} className="space-y-1">
+          <span
             className={clsx({
               "text-teal-600": !isNumber(key),
               "text-zinc-400": isNumber(key),
             })}
           >
-            {key}:<span className="text-rose-200">{isArray ? " [" : ""}</span>
-          </li>
-          <div className="ml-[1px] border-l-2 border-zinc-300 pl-4">
-            <View node={value} />
-          </div>
-          <span className="text-rose-200">{isArray ? "] " : ""}</span>
-        </div>
+            {key}:{" "}
+            {isArray ? <span className="text-rose-200">{" ["}</span> : null}
+          </span>
+
+          {isPrimitive ? (
+            <p className="inline break-all">{formatValue(value)}</p>
+          ) : null}
+
+          {!isPrimitive ? (
+            <div className="ml-[1px] border-l-2 border-zinc-300 pl-4">
+              <View node={value} />
+            </div>
+          ) : null}
+
+          {isArray ? <span className="text-rose-200">{"] "}</span> : null}
+        </li>
       )
     })
   }, [entries])
