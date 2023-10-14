@@ -84,7 +84,7 @@ export default function Virtualized<T>({
   const items = useMemo(() => {
     const items = []
 
-    for (let i = 0; i < itemCount; i++) {
+    for (let i = from; i <= to; i++) {
       items.push(
         render(
           i,
@@ -102,16 +102,6 @@ export default function Virtualized<T>({
     return items
   }, [from, to])
 
-  const renderedItems = useMemo(() => {
-    let filtered = []
-
-    for (let i = from; i <= to; i++) {
-      filtered.push(items[i])
-    }
-
-    return filtered
-  }, [items])
-
   return (
     <div
       style={{
@@ -121,7 +111,7 @@ export default function Virtualized<T>({
       }}
       ref={ref}
     >
-      {renderedItems}
+      {items}
     </div>
   )
 }
