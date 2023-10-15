@@ -32,8 +32,6 @@ export default function Viewer() {
     return chunks
   }, [json.nodeList])
 
-  console.log(chunks[page], chunks.length)
-
   return (
     <section className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 px-2">
       <div className="mt-4 flex items-center gap-2">
