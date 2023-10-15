@@ -2,12 +2,13 @@ import { jsonStore } from "../../store/json-store"
 import View from "../View"
 import { useNavigate } from "react-router-dom"
 import Virtualized from "../Virtualized"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 
 export default function Viewer() {
   const navigate = useNavigate()
   const { json } = jsonStore()
   const [page, setPage] = useState(0)
+  const controlRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!json.name) {
@@ -21,7 +22,7 @@ export default function Viewer() {
   const chunks = useMemo(() => {
     const MAX_HEIGHT = 1_000_000
     const ITEM_HEIGHT = 28
-    const CHUNK_SIZE = MAX_HEIGHT / ITEM_HEIGHT
+    const CHUNK_SIZE = Math.floor(MAX_HEIGHT / ITEM_HEIGHT)
 
     const chunks = []
 
@@ -54,10 +55,17 @@ export default function Viewer() {
           }}
         />
         {chunks.length > 1 ? (
-          <div className="flex items-center justify-center gap-2">
+          <div
+            className="flex items-center justify-center gap-2"
+            ref={controlRef}
+          >
             <button
               onClick={() => {
                 setPage((prev) => Math.max(0, prev - 1))
+                scrollTo({
+                  top: controlRef.current?.offsetTop,
+                  behavior: "smooth",
+                })
               }}
               disabled={page === 0}
               className="mx-auto rounded-md border border-black bg-gradient-to-r from-[#E4E4E4]
@@ -78,6 +86,10 @@ export default function Viewer() {
                 onChange={(e) => {
                   const value = Number(e.target.value)
                   setPage(Math.max(0, Math.min(value - 1, chunks.length - 1)))
+                  scrollTo({
+                    top: controlRef.current?.offsetTop,
+                    behavior: "smooth",
+                  })
                 }}
                 className="w-12 rounded-md border border-black text-center [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
               />{" "}
@@ -87,6 +99,10 @@ export default function Viewer() {
             <button
               onClick={() => {
                 setPage((prev) => Math.min(prev + 1, chunks.length - 1))
+                scrollTo({
+                  top: controlRef.current?.offsetTop,
+                  behavior: "smooth",
+                })
               }}
               disabled={page === chunks.length - 1}
               className="mx-auto rounded-md border border-black bg-gradient-to-r from-[#E4E4E4]

@@ -69,7 +69,7 @@ export default function Virtualized<T>({
     return () => {
       window.removeEventListener("scroll", throttled)
     }
-  }, [])
+  }, [itemCount])
 
   const items = useMemo(() => {
     const items = []
