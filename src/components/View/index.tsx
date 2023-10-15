@@ -33,7 +33,7 @@ function View({ node, style }: Props) {
           <div
             role="none"
             key={i}
-            className="bg-gray ml-[2px] mr-4 h-full w-[2px]"
+            className="ml-[2px] mr-4 h-full w-[2px] bg-gray"
           />
         ))}
       </div>
@@ -61,7 +61,7 @@ function View({ node, style }: Props) {
 
       {type === "primitive" ? (
         <p
-          title={value}
+          title={String(value)}
           className="ml-1 line-clamp-1"
           role="text"
           aria-label={`Value: ${formatValue(value)}`}

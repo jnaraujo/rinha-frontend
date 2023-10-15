@@ -22,21 +22,23 @@ export default function Viewer() {
       <div className="mt-4 flex items-center gap-2">
         <h1 className="text-4xl font-bold">{json.name}</h1>
       </div>
-      <Virtualized
-        data={json.nodeList}
-        itemHeight={28}
-        overscan={20}
-        itemCount={json.nodeList.length}
-        role="list"
-        aria-label={`Tree view of ${json.name} file`}
-        render={(index, style, node) => {
-          return (
-            <div key={index} style={style}>
-              <View node={node} />
-            </div>
-          )
-        }}
-      />
+      <div className="mb-8">
+        <Virtualized
+          data={json.nodeList}
+          itemHeight={28}
+          overscan={20}
+          itemCount={json.nodeList.length}
+          role="list"
+          aria-label={`Tree view of ${json.name} file`}
+          render={(index, style, node) => {
+            return (
+              <div key={index} style={style}>
+                <View node={node} />
+              </div>
+            )
+          }}
+        />
+      </div>
     </section>
   )
 }

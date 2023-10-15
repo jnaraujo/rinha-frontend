@@ -8,8 +8,10 @@ export function formatValue(value: any) {
       return `${value}`
     case "object":
       return "null"
+    case "undefined":
+      return "undefined"
     default:
-      return value
+      return value.toString()
   }
 }
 
