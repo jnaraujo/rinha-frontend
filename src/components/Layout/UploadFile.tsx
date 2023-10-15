@@ -74,7 +74,7 @@ export default function UploadFile() {
               className="mx-auto rounded-md border border-black bg-gradient-to-r from-[#E4E4E4]
               to-[#F7F7F7] px-2 py-1 text-black transition-all duration-200 hover:drop-shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
               onClick={handleClick}
-              aria-label="Select JSON file"
+              aria-label="Load JSON"
             >
               {loading ? (
                 <span className="flex gap-2">
