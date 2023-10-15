@@ -80,7 +80,7 @@ export default function Virtualized<T>({
           i,
           {
             position: "absolute",
-            top: i * itemHeight,
+            top: i * itemHeight + "px",
             width: "100%",
             height: itemHeight,
           },
@@ -97,7 +97,7 @@ export default function Virtualized<T>({
       style={{
         width: "100%",
         position: "relative",
-        height: itemCount * itemHeight,
+        height: itemCount * itemHeight + "px",
       }}
       ref={ref}
       {...rest}
