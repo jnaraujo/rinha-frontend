@@ -1,42 +1,38 @@
-import { jsonStore } from "../../store/json-store"
 import View from "../View"
-import { useNavigate } from "react-router-dom"
 import Virtualized from "../Virtualized"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useMemo, useRef, useState } from "react"
+import { jsonNodes } from "../../lib/json"
 
-export default function Viewer() {
-  const navigate = useNavigate()
-  const { json } = jsonStore()
+interface Props {
+  fileName: string
+}
+
+export default function Viewer({ fileName }: Props) {
   const [page, setPage] = useState(0)
   const controlRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!json.name) {
-      navigate("/")
-    }
-  }, [json.name])
-
-  if (!json.name) return null
-  if (!json.nodeList) return null
-
   const chunks = useMemo(() => {
+    if (jsonNodes.length === 0) {
+      return [[]]
+    }
+
     const MAX_HEIGHT = 1_000_000
     const ITEM_HEIGHT = 28
     const CHUNK_SIZE = Math.floor(MAX_HEIGHT / ITEM_HEIGHT)
 
     const chunks = []
 
-    for (let i = 0; i < json.nodeList.length; i += CHUNK_SIZE) {
-      chunks.push(json.nodeList.slice(i, i + CHUNK_SIZE))
+    for (let i = 0; i < jsonNodes.length; i += CHUNK_SIZE) {
+      chunks.push(jsonNodes.slice(i, i + CHUNK_SIZE))
     }
 
     return chunks
-  }, [json.nodeList])
+  }, [jsonNodes])
 
   return (
     <section className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 px-2">
       <div className="mt-4 flex items-center gap-2">
-        <h1 className="text-4xl font-bold">{json.name}</h1>
+        <h1 className="text-4xl font-bold">{fileName}</h1>
       </div>
       <div className="mb-6 flex flex-col items-center gap-6">
         <Virtualized
@@ -45,7 +41,7 @@ export default function Viewer() {
           overscan={20}
           itemCount={chunks[page].length}
           role="list"
-          aria-label={`Tree view of ${json.name} file`}
+          aria-label={`Tree view of ${fileName} file`}
           render={(index, style, node) => {
             return (
               <div key={index} style={style}>

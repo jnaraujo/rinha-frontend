@@ -1,11 +1,13 @@
-import { jsonStore } from "../../store/json-store"
 import { useNavigate } from "react-router-dom"
 import { Loader2 } from "lucide-react"
-import { parse } from "../../lib/json"
+import {
+  jsonNodes,
+  loadAndParseJsonFileStream,
+  parseTree,
+} from "../../lib/json"
 import { useRef, useState } from "react"
 
 export default function UploadFile() {
-  const { setJson } = jsonStore()
   const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement>(null)
   const [error, setError] = useState<string | null>(null)
@@ -22,26 +24,32 @@ export default function UploadFile() {
     if (target.files && target.files[0]) {
       const file = target.files[0]
 
-      let reader = new FileReader()
-      reader.onload = async function (e) {
-        const result = e.target?.result as string
+      console.time("loadAndParseJsonFile")
 
-        try {
-          const parsed = JSON.parse(result)
+      loadAndParseJsonFileStream(file)
+        .then((json) => {
+          console.timeEnd("loadAndParseJsonFile")
 
-          setJson({
-            name: file.name,
-            nodeList: parse(parsed),
+          jsonNodes.length = 0 // reset jsonNodes
+
+          console.time("parseTree")
+          parseTree(json)
+          console.timeEnd("parseTree")
+
+          console.log(jsonNodes.length)
+
+          navigate("/json-viewer", {
+            state: {
+              fileName: file.name,
+            },
           })
-          navigate("/json-viewer")
-        } catch (error) {
-          setError("Invalid file. Please load a valid JSON file.")
-        } finally {
+        })
+        .catch((error) => {
+          setError(error.message)
+        })
+        .finally(() => {
           setLoading(false)
-        }
-      }
-
-      reader.readAsText(file)
+        })
     } else {
       setLoading(false)
     }

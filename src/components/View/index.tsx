@@ -1,6 +1,6 @@
-import { formatValue, isNumber } from "./helper"
+import { isNumber } from "./helper"
 import clsx from "clsx"
-import { JsonNode } from "../../lib/json"
+import { JsonNode, KIND } from "../../lib/json"
 import { memo } from "react"
 
 interface Props {
@@ -11,14 +11,12 @@ interface Props {
 function View({ node, style }: Props) {
   if (!node) return null
 
-  const { key, value, type, distance } = node
+  const [key, value, type, distance] = node
 
-  const listItemRole = type === "arrayClose" ? "presentation" : "listitem"
+  const listItemRole = type === KIND.ARRAY_CLOSE ? "presentation" : "listitem"
 
   const listItemLabel =
-    type !== "arrayClose" && key && value
-      ? `${key}: ${formatValue(value)}`
-      : formatValue(value)
+    type !== KIND.ARRAY_CLOSE && key && value ? `${key}: ${value}` : value
 
   return (
     <li
@@ -44,7 +42,7 @@ function View({ node, style }: Props) {
           "text-gray": isNumber(key),
         })}
       >
-        {type !== "arrayClose" ? (
+        {type !== KIND.ARRAY_CLOSE ? (
           <>
             <p role="text" aria-label={`Key: ${key}`}>
               {key}:{" "}
@@ -52,25 +50,25 @@ function View({ node, style }: Props) {
           </>
         ) : null}
 
-        {type === "arrayEnter" ? (
+        {type === KIND.ARRAY_ENTER ? (
           <span className="text-brackets" role="none">
             {" ["}
           </span>
         ) : null}
       </div>
 
-      {type === "primitive" ? (
+      {type === KIND.PRIMITIVE ? (
         <p
           title={String(value)}
           className="ml-1 line-clamp-1"
           role="text"
-          aria-label={`Value: ${formatValue(value)}`}
+          aria-label={`Value: ${value}`}
         >
-          {formatValue(value)}
+          {value}
         </p>
       ) : null}
 
-      {type === "arrayClose" ? (
+      {type === KIND.ARRAY_CLOSE ? (
         <span className="text-brackets">{"] "}</span>
       ) : null}
     </li>
