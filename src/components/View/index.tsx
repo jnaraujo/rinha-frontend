@@ -1,6 +1,6 @@
 import { isNumber } from "./helper"
 import clsx from "clsx"
-import { JsonNode, KIND } from "../../lib/json"
+import { JsonNode } from "../../lib/json"
 import { memo } from "react"
 
 interface Props {
@@ -11,12 +11,12 @@ interface Props {
 function View({ node, style }: Props) {
   if (!node) return null
 
-  const [key, value, type, distance] = node
+  const { key, value, kind, depth } = node
 
-  const listItemRole = type === KIND.ARRAY_CLOSE ? "presentation" : "listitem"
+  const listItemRole = kind === "arrayClose" ? "presentation" : "listitem"
 
   const listItemLabel =
-    type !== KIND.ARRAY_CLOSE && key && value ? `${key}: ${value}` : value
+    kind !== "arrayClose" && key && value ? `${key}: ${value}` : value
 
   return (
     <li
@@ -27,7 +27,7 @@ function View({ node, style }: Props) {
       aria-label={listItemLabel}
     >
       <div className="flex h-full shrink-0 items-center">
-        {[...Array(distance)].map((_, i) => (
+        {[...Array(depth)].map((_, i) => (
           <div
             role="none"
             key={i}
@@ -42,7 +42,7 @@ function View({ node, style }: Props) {
           "text-gray": isNumber(key),
         })}
       >
-        {type !== KIND.ARRAY_CLOSE ? (
+        {kind !== "arrayClose" ? (
           <>
             <p role="text" aria-label={`Key: ${key}`}>
               {key}:{" "}
@@ -50,14 +50,14 @@ function View({ node, style }: Props) {
           </>
         ) : null}
 
-        {type === KIND.ARRAY_ENTER ? (
+        {kind === "arrayOpen" ? (
           <span className="text-brackets" role="none">
             {" ["}
           </span>
         ) : null}
       </div>
 
-      {type === KIND.PRIMITIVE ? (
+      {kind === "primitive" ? (
         <p
           title={String(value)}
           className="ml-1 line-clamp-1"
@@ -68,7 +68,7 @@ function View({ node, style }: Props) {
         </p>
       ) : null}
 
-      {type === KIND.ARRAY_CLOSE ? (
+      {kind === "arrayClose" ? (
         <span className="text-brackets">{"] "}</span>
       ) : null}
     </li>

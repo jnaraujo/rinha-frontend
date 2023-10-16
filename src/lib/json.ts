@@ -1,15 +1,13 @@
-export const KIND = {
-  PRIMITIVE: 0,
-  ARRAY_ENTER: 1,
-  ARRAY_CLOSE: 2,
-  OBJECT_ENTER: 3,
+export interface JsonNode {
+  key: string
+  value: string
+  kind: "primitive" | "arrayClose" | "arrayOpen" | "objectOpen" | "objectClose"
+  depth: number
 }
-
-export type JsonNode = [string, string, number, number]
 
 export const jsonNodes: JsonNode[] = []
 
-export function parseTree(node: any, distance = 0) {
+export function parseTree(node: any, depth = 0) {
   if (node === null) return
 
   const entries = Object.entries(node)
@@ -20,23 +18,35 @@ export function parseTree(node: any, distance = 0) {
     const [key, value] = entries[i]
 
     if (typeof value !== "object" || value === null) {
-      jsonNodes.push([key, formatValue(value), KIND.PRIMITIVE, distance])
-    } else {
-      const isArray = Array.isArray(value)
-
-      jsonNodes.push([
+      jsonNodes.push({
         key,
-        "",
-        isArray ? KIND.ARRAY_ENTER : KIND.OBJECT_ENTER,
-        distance,
-      ])
-      if (value !== null) {
-        parseTree(value, distance + 1)
-      }
+        value: formatValue(value),
+        kind: "primitive",
+        depth,
+      })
+      continue
+    }
 
-      if (isArray) {
-        jsonNodes.push([key, "", KIND.ARRAY_CLOSE, distance])
-      }
+    const isArray = Array.isArray(value)
+
+    jsonNodes.push({
+      key,
+      value: "",
+      kind: isArray ? "arrayOpen" : "objectOpen",
+      depth,
+    })
+
+    if (value !== null) {
+      parseTree(value, depth + 1)
+    }
+
+    if (isArray) {
+      jsonNodes.push({
+        key,
+        value: "",
+        kind: "arrayClose",
+        depth,
+      })
     }
   }
 }
