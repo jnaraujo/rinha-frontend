@@ -58,10 +58,11 @@ export default function Viewer({ fileName }: Props) {
             <button
               onClick={() => {
                 setPage((prev) => Math.max(0, prev - 1))
-                scrollTo({
-                  top: controlRef.current?.offsetTop,
-                  behavior: "smooth",
-                })
+                setTimeout(() => {
+                  scrollTo({
+                    top: controlRef.current?.offsetTop,
+                  })
+                }, 5)
               }}
               disabled={page === 0}
               className="mx-auto rounded-md border border-black bg-gradient-to-r from-[#E4E4E4]
@@ -82,9 +83,9 @@ export default function Viewer({ fileName }: Props) {
                 onChange={(e) => {
                   const value = Number(e.target.value)
                   setPage(Math.max(0, Math.min(value - 1, chunks.length - 1)))
+
                   scrollTo({
                     top: controlRef.current?.offsetTop,
-                    behavior: "smooth",
                   })
                 }}
                 className="w-12 rounded-md border border-black text-center [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
@@ -97,7 +98,6 @@ export default function Viewer({ fileName }: Props) {
                 setPage((prev) => Math.min(prev + 1, chunks.length - 1))
                 scrollTo({
                   top: controlRef.current?.offsetTop,
-                  behavior: "smooth",
                 })
               }}
               disabled={page === chunks.length - 1}
