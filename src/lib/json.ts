@@ -10,13 +10,7 @@ export const jsonNodes: JsonNode[] = []
 export function parseTree(node: any, depth = 0) {
   if (node === null) return
 
-  const entries = Object.entries(node)
-
-  if (entries.length === 0) return
-
-  for (let i = 0; i < entries.length; i++) {
-    const [key, value] = entries[i]
-
+  function handle(key: string, value: any) {
     if (typeof value !== "object" || value === null) {
       jsonNodes.push({
         key,
@@ -24,29 +18,39 @@ export function parseTree(node: any, depth = 0) {
         kind: "primitive",
         depth,
       })
-      continue
-    }
+    } else {
+      const isArray = Array.isArray(value)
 
-    const isArray = Array.isArray(value)
-
-    jsonNodes.push({
-      key,
-      value: "",
-      kind: isArray ? "arrayOpen" : "objectOpen",
-      depth,
-    })
-
-    if (value !== null) {
-      parseTree(value, depth + 1)
-    }
-
-    if (isArray) {
       jsonNodes.push({
         key,
         value: "",
-        kind: "arrayClose",
+        kind: isArray ? "arrayOpen" : "objectOpen",
         depth,
       })
+
+      if (value !== null) {
+        parseTree(value, depth + 1)
+      }
+
+      if (isArray) {
+        jsonNodes.push({
+          key,
+          value: "",
+          kind: "arrayClose",
+          depth,
+        })
+      }
+    }
+  }
+
+  if (Array.isArray(node)) {
+    for (let i = 0; i < node.length; i++) {
+      handle(i.toString(), node[i])
+    }
+  } else if (typeof node === "object") {
+    for (const key in node) {
+      const value = node[key]
+      handle(key, value)
     }
   }
 }
