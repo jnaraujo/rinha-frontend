@@ -44,8 +44,8 @@ export default function UploadFile() {
             },
           })
         })
-        .catch((error) => {
-          setError(error.message)
+        .catch((_) => {
+          setError("Invalid file. Please load a valid JSON file.")
         })
         .finally(() => {
           setLoading(false)
