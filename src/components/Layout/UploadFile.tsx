@@ -1,10 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { Loader2 } from "lucide-react"
-import {
-  jsonNodes,
-  loadAndParseJsonFileStream,
-  parseTree,
-} from "../../lib/json"
+import { jsonNodes, loadAndParseJsonFile, parseTree } from "../../lib/json"
 import { useRef, useState } from "react"
 
 export default function UploadFile() {
@@ -26,7 +22,7 @@ export default function UploadFile() {
 
       console.time("loadAndParseJsonFile")
 
-      loadAndParseJsonFileStream(file)
+      loadAndParseJsonFile(file)
         .then((json) => {
           console.timeEnd("loadAndParseJsonFile")
           console.time("parseTree")

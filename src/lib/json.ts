@@ -77,11 +77,16 @@ export async function loadAndParseJsonFile(file: File) {
 
     let reader = new FileReader()
 
+    console.time("loadfilestream")
     reader.onload = async function (e) {
+      console.timeEnd("loadfilestream")
+
       const result = e.target?.result as string
 
       try {
+        console.time("JSON.parse")
         const json = JSON.parse(result)
+        console.timeEnd("JSON.parse")
         resolve(json)
       } catch (error) {
         reject(error)
@@ -95,7 +100,7 @@ export async function loadAndParseJsonFile(file: File) {
 export async function loadAndParseJsonFileStream(file: File) {
   return new Promise(async (resolve, reject) => {
     jsonNodes.length = 0 // reset jsonNodes
-
+    console.time("loadfilestream")
     let buffer = ""
 
     await file
@@ -108,7 +113,12 @@ export async function loadAndParseJsonFileStream(file: File) {
           },
           flush(controller) {
             try {
+              console.timeEnd("loadfilestream")
+
+              console.time("JSON.parse")
               const json = JSON.parse(buffer)
+              console.timeEnd("JSON.parse")
+
               controller.enqueue(json)
             } catch (error) {
               reject(error)
