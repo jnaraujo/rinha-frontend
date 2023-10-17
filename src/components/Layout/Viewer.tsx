@@ -38,7 +38,7 @@ export default function Viewer({ fileName }: Props) {
         <Virtualized
           data={chunks[page] ?? []}
           itemHeight={28}
-          overscan={20}
+          overscan={4}
           itemCount={chunks[page].length}
           role="list"
           aria-label={`Tree view of ${fileName} file`}

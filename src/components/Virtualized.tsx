@@ -62,7 +62,7 @@ export default function Virtualized<T>({
       })
     }
 
-    const throttled = throttle(handleScroll, 100)
+    const throttled = throttle(handleScroll, 50)
 
     window.addEventListener("scroll", throttled)
 
