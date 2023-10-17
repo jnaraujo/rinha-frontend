@@ -1,6 +1,6 @@
 export interface JsonNode {
-  key: string
-  value: string
+  key: string | number
+  value: any
   kind: "primitive" | "arrayClose" | "arrayOpen" | "objectOpen" | "objectClose"
   depth: number
 }
@@ -10,52 +10,51 @@ export const jsonNodes: JsonNode[] = []
 export function parseTree(node: any, depth = 0) {
   if (node === null) return
 
-  function handle(key: string, value: any) {
+  function handle(key: string | number, value: any) {
     if (typeof value !== "object" || value === null) {
       jsonNodes.push({
         key,
-        value: formatValue(value),
+        value,
         kind: "primitive",
         depth,
       })
-    } else {
-      const isArray = Array.isArray(value)
+      return
+    }
+    const isArray = Array.isArray(value)
 
+    jsonNodes.push({
+      key,
+      value: "",
+      kind: isArray ? "arrayOpen" : "objectOpen",
+      depth,
+    })
+
+    if (value !== null) {
+      parseTree(value, depth + 1)
+    }
+
+    if (isArray) {
       jsonNodes.push({
         key,
         value: "",
-        kind: isArray ? "arrayOpen" : "objectOpen",
+        kind: "arrayClose",
         depth,
       })
-
-      if (value !== null) {
-        parseTree(value, depth + 1)
-      }
-
-      if (isArray) {
-        jsonNodes.push({
-          key,
-          value: "",
-          kind: "arrayClose",
-          depth,
-        })
-      }
     }
   }
 
   if (Array.isArray(node)) {
     for (let i = 0; i < node.length; i++) {
-      handle(i.toString(), node[i])
+      handle(i, node[i])
     }
   } else if (typeof node === "object") {
     for (const key in node) {
-      const value = node[key]
-      handle(key, value)
+      handle(key, node[key])
     }
   }
 }
 
-function formatValue(value: any) {
+export function formatValue(value: any) {
   switch (typeof value) {
     case "string":
       return `"${value}"`
@@ -74,6 +73,8 @@ function formatValue(value: any) {
 
 export async function loadAndParseJsonFile(file: File) {
   return new Promise(async (resolve, reject) => {
+    jsonNodes.length = 0 // reset jsonNodes
+
     let reader = new FileReader()
 
     reader.onload = async function (e) {
@@ -93,6 +94,8 @@ export async function loadAndParseJsonFile(file: File) {
 
 export async function loadAndParseJsonFileStream(file: File) {
   return new Promise(async (resolve, reject) => {
+    jsonNodes.length = 0 // reset jsonNodes
+
     let buffer = ""
 
     await file

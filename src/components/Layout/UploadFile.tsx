@@ -29,9 +29,6 @@ export default function UploadFile() {
       loadAndParseJsonFileStream(file)
         .then((json) => {
           console.timeEnd("loadAndParseJsonFile")
-
-          jsonNodes.length = 0 // reset jsonNodes
-
           console.time("parseTree")
           parseTree(json)
           console.timeEnd("parseTree")

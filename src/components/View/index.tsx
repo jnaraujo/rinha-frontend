@@ -1,6 +1,6 @@
 import { isNumber } from "./helper"
 import clsx from "clsx"
-import { JsonNode } from "../../lib/json"
+import { JsonNode, formatValue } from "../../lib/json"
 import { memo } from "react"
 
 interface Props {
@@ -11,7 +11,8 @@ interface Props {
 function View({ node, style }: Props) {
   if (!node) return null
 
-  const { key, value, kind, depth } = node
+  const { key, value: valueRaw, kind, depth } = node
+  const value = formatValue(valueRaw)
 
   const listItemRole = kind === "arrayClose" ? "presentation" : "listitem"
 
