@@ -8,8 +8,6 @@ export interface JsonNode {
 export const jsonNodes: JsonNode[] = []
 
 export function parseTree(node: any, depth = 0) {
-  if (node === null) return
-
   function handle(key: string | number, value: any) {
     if (typeof value !== "object" || value === null) {
       jsonNodes.push({
@@ -29,9 +27,7 @@ export function parseTree(node: any, depth = 0) {
       depth,
     })
 
-    if (value !== null) {
-      parseTree(value, depth + 1)
-    }
+    parseTree(value, depth + 1)
 
     if (isArray) {
       jsonNodes.push({
@@ -47,7 +43,7 @@ export function parseTree(node: any, depth = 0) {
     for (let i = 0; i < node.length; i++) {
       handle(i, node[i])
     }
-  } else if (typeof node === "object") {
+  } else {
     for (const key in node) {
       handle(key, node[key])
     }
